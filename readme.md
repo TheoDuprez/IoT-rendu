@@ -28,7 +28,11 @@ Can handle dependencies of a project, as libraries, DBs, etc.
 		config.vm.box = "ubuntu/bionic64"
 	end
 
-Here, this simple vagrantfile only dwonloads an ubuntu box (like an image) and initializes it on a VM.
+Here, this simple vagrantfile only downloads an ubuntu box (like an image) and initializes it on a VM.
+
+### Tips
+
+	vboxmanage list runningvms #To show running vms
 
 ## Part 1: K3s and Vagrant
 
