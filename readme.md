@@ -33,6 +33,11 @@ Here, this simple vagrantfile only downloads an ubuntu box (like an image) and i
 ### Tips
 
 	vboxmanage list runningvms #To show running vms
+	vagrant ssh <VM_NAME> # To connect via ssh
+	ip addr show # once connected in ssh, to show the private network ip (eth1)
+   sudo kubectl get nodes -o wide # check nodes in a vm
+
+   /etc/rancher/k3s/server/node-token # path to server/controller token
 
 ## Part 1: K3s and Vagrant
 
