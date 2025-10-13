@@ -78,11 +78,22 @@ Here, this simple vagrantfile only downloads an ubuntu box (like an image) and i
 - Ensure proper networking between machines
 - Configure K3s cluster connectivity (server-agent communication)
 
-### Implementation Steps
-1. Create Vagrantfile with two machine definitions
-2. Configure networking and resource allocation
-3. Set up provisioning scripts for K3s installation
-4. Test cluster connectivity and kubectl functionality
+### Testing
+
+- `vagrant up` on the Vagrantfile location.
+- `vagrant global-status` to see the VMs running and their id
+- `vagrant destroy tgellonS -f` to destroy a VM
+- `vagrant ssh tgellonS` to connect to a VM
+
+- `sudo kubectl get nodes -o wide` to see the nodes in the cluster
+- `sudo kubectl get pod -A` to see the pods
+- `ip a show eth1` to see the configuration
+-
+- Si pbm de virtualisation sur le run *vagrant up* `kvm ` 
+
+## Part 2 : K3s and 3 apps (+ Ingress)
+
+
 
 ## Ressources
 

@@ -1,0 +1,19 @@
+apiVersion: app-one/v1
+kind: Deployment
+metadata:
+  name: app-one
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-one
+  template:
+    metadata:
+      labels:
+        app: app-one
+    spec:
+      containers:
+      - name: app-one
+        image: tgellon/app-one:latest
+        ports:
+        - containerPort: 8080
