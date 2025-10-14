@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: app-one
-          image: tgellon/app-one:latest
+          image: nginx:latest
+          imagePullPolicy: Always
           ports:
           - containerPort: 8080
           readinessProbe:
@@ -29,3 +30,39 @@ spec:
           env:
             - name: MSG
               value: "Hello from app1."
+          volumeMounts:
+            - name: html-volume
+              mountPath: /usr/share/nginx/html
+
+      volumes:
+        - name: html-volume
+          configMap:
+            name: app-one-html
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-one-html
+data:
+  index.html: |
+    <html>
+      <body style="font-family: sans-serif; text-align: center; margin-top: 40px;">
+        <h1>Hello from app one!</h1>
+      </body>
+    </html>
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-one-service
+spec:
+  selector:
+    app: app-one
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
