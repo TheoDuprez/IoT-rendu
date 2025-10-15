@@ -93,7 +93,11 @@ Here, this simple vagrantfile only downloads an ubuntu box (like an image) and i
 
 ## Part 2 : K3s and 3 apps (+ Ingress)
 
+### Ingress
 
+Ingress is an API object that manages external access to the services in a cluster, typically HTTP. Ingress may provide load balancing, SSL termination and name-based virtual hosting.
+
+Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster. Traffic routing is controlled by rules defined on the Ingress resource.
 
 ## Ressources
 

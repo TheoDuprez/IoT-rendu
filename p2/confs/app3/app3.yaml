@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: app-three
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: app-three
@@ -27,9 +27,6 @@ spec:
             httpGet:
               path: /
               port: 80
-          env:
-            - name: MSG
-              value: "Hello from app3."
           volumeMounts:
             - name: html-volume
               mountPath: /usr/share/nginx/html
@@ -49,7 +46,7 @@ data:
   index.html: |
     <html>
       <body style="font-family: sans-serif; text-align: center; margin-top: 40px;">
-        <h1>Hello from app three!</h1>
+        <h1>Hello from app three.</h1>
       </body>
     </html>
 
