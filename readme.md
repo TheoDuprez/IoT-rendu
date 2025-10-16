@@ -16,6 +16,18 @@ K3s is a Kubernetes distribution made by Rancher Labs. It is a lightweight Kuber
 
 ![alt text](misc/kube_architecture.png)
 
+#### Lexicon
+
+ - Cluster : Consist of a control plane and at least one worker node
+
+ - Control plane : Managing the state of the cluster with different components
+
+ - Node : Physical/virtual machine running containerized applications in pods. Nodes are cluster-wide ressources.
+
+ - Namespace : Feature to partition ressources into an isolated environment. Ex: dev, ppr, prod envs. 
+
+ - Pod : a group of one or more containers, sharing same storage and network ressources.
+
 ### Vagrant
 
 Vagrant is a tool used to automate the creation and deployment of virtual machines. Made by Hashicorp, which also made Terraform.
@@ -46,7 +58,7 @@ Here, this simple vagrantfile only downloads an ubuntu box (like an image) and i
 
 **Virtual Machine Specifications**:
 - **Resources**: Minimal configuration (1 CPU, 512MB-1024MB RAM)
-- **OS**: Latest stable distribution of your choice
+- **OS**: Latest stable distribution of our choice
 - **Provider**: Vagrant
 
 **Machine Configuration**:
@@ -104,9 +116,19 @@ Ingress exposes HTTP and HTTPS routes from outside the cluster to services withi
 
 By default, Traefik is the ingress used on k3s, and it is enough for this part.
 
-## Part 3 : K3D
+## Part 3 : K3D and ArgoCD
+
+### K3d
 
 K3d is a lighter version of kubernetes like k3s, but made to use docker containers.
+
+### ArgoCD
+
+ArgoCD is a CD tool for kubernetes, that can pull updated code from Git repositories and deploy it to kubernetes ressources. It has a web and CLI interface.
+
+### Testing
+
+   sudo docker rm -f $(sudo docker ps -aq)
 
 ## Ressources
 
