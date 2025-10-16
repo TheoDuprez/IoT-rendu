@@ -6,16 +6,16 @@ VB_INSTALLATION = install_virtualbox.sh
 
 
 install_vb:
-	@echo "Exécution du script ${SCRIPT_DIR}/${VB_INSTALLATION}..."
-	@bash ${SCRIPT_DIR}/${VB_INSTALLATION}
+	@echo "Exécution du script ${SCRIPTS_DIR}/${VB_INSTALLATION}..."
+	@bash ${SCRIPTS_DIR}/${VB_INSTALLATION}
 	@echo "VirtualBox installé ✅"
 
 #Install Vagrant
 VAGRANT_INSTALLATION = install_vagrant.sh 
 
 install_vagrant:
-	@echo "Exécution du script ${SCRIPT_DIR}/${VAGRANT_INSTALLATION}..."
-	@bash ${SCRIPT_DIR}/${VAGRANT_INSTALLATION}
+	@echo "Exécution du script ${SCRIPTS_DIR}/${VAGRANT_INSTALLATION}..."
+	@bash ${SCRIPTS_DIR}/${VAGRANT_INSTALLATION}
 	@echo "Vagrant installé ✅"
 
 

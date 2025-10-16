@@ -1,33 +1,44 @@
+
 #!/bin/bash
+
+# Script d'installation de Vagrant sous Debian
+# Nécessite les privilèges root
 
 set -e
 
-echo "Mise à jour des paquets..."
-sudo apt update && sudo apt upgrade -y
+echo "=== Installation de Vagrant sous Debian ==="
 
-echo "Installation des dépendances nécessaires..."
-sudo apt install -y curl gnupg software-properties-common
+# Vérifier si le script est exécuté en root
+if [ "$EUID" -ne 0 ]; then 
+    echo "Erreur: Ce script doit être exécuté en tant que root (utilisez sudo)"
+    exit 1
+fi
 
-# Récupération de la dernière version de Vagrant (adapté pour Debian 12 / Trixie)
-VAGRANT_VERSION="latest"
+# Mise à jour des paquets
+echo "Mise à jour de la liste des paquets..."
+apt-get update
 
-echo "Téléchargement de Vagrant..."
-# On peut prendre directement la dernière version stable depuis HashiCorp :
-# On peut aussi spécifier une version fixe si besoin, ici on récupère la dernière stable en dur.
-# Par défaut, on télécharge la version 2.3.7 par exemple (à adapter si besoin)
+# Installation des dépendances
+echo "Installation des dépendances..."
+apt-get install -y wget gnupg2 software-properties-common
 
-VAGRANT_DEB="vagrant_2.3.7_amd64.deb"
-DOWNLOAD_URL="https://releases.hashicorp.com/vagrant/2.3.7/${VAGRANT_DEB}"
+# Téléchargement de la clé GPG HashiCorp
+echo "Ajout de la clé GPG HashiCorp..."
+wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 
-curl -o /tmp/${VAGRANT_DEB} ${DOWNLOAD_URL}
+# Ajout du dépôt HashiCorp
+echo "Ajout du dépôt HashiCorp..."
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
 
+# Mise à jour et installation de Vagrant
 echo "Installation de Vagrant..."
-sudo dpkg -i /tmp/${VAGRANT_DEB} || sudo apt-get install -f -y
+apt-get update
+apt-get install -y vagrant
 
-echo "Nettoyage..."
-rm /tmp/${VAGRANT_DEB}
-
-echo "Vagrant version installée :"
+# Vérification de l'installation
+echo ""
+echo "=== Installation terminée ==="
 vagrant --version
 
-echo "Installation terminée avec succès."
+echo ""
+echo "Vagrant a été installé avec succès !"
