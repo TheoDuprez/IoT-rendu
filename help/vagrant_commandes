@@ -62,3 +62,20 @@ lciulloSW: [INFO]  Host ip6tables-save/ip6tables-restore tools not found
 sudo journalctl -u k3s-agent -f
 # Vérifie si le master est bien accessible
 vagrant ssh lciulloSW -c "curl -k https://192.168.56.110:6443"
+
+vagrant ssh lciulloS -c "sudo systemctl status k3s --no-pager"
+
+Le problème principal est que plusieurs pods système (dont coredns, traefik, metrics-server) ne démarrent pas correctement sur le master.  
+Tant que ces pods sont en erreur ou en CrashLoopBackOff, le cluster ne sera pas fonctionnel et les workers ne pourront pas s'enregistrer.
+
+**Ce qu'il faut faire maintenant :**
+1. Inspecter les logs d'au moins un pod en erreur, par exemple coredns :
+   ```bash
+   vagrant ssh lciulloS -c "sudo kubectl logs -n kube-system coredns-64fd4b4794-q5h4f"
+   ```
+2. Corriger l'erreur affichée (souvent liée à un problème réseau, DNS, ou ressources manquantes).
+
+Voulez-vous que je récupère les logs de coredns pour vous ?
+
+sudo systemctl status k3s-agent
+sudo systemctl status k3s-agent.service
