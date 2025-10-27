@@ -26,7 +26,9 @@ K3s is a Kubernetes distribution made by Rancher Labs. It is a lightweight Kuber
 
  - Namespace : Feature to partition ressources into an isolated environment. Ex: dev, ppr, prod envs. 
 
- - Pod : a group of one or more containers, sharing same storage and network ressources.
+ - Pod : a group of one or more containers, sharing same storage and network ressources. For example, you have a backend pod and a frontend pod. Each pod has its own IP address.
+
+ - Service : a method to expose a network app, running on one or more pods in the cluster.
 
 ### Vagrant
 
@@ -124,11 +126,19 @@ K3d is a lighter version of kubernetes like k3s, but made to use docker containe
 
 ### ArgoCD
 
-ArgoCD is a CD tool for kubernetes, that can pull updated code from Git repositories and deploy it to kubernetes ressources. It has a web and CLI interface.
+ArgoCD is a CD tool for kubernetes, that can pull updated code from Git repositories and deploy it to kubernetes ressources. It has a web and CLI interface. By default it refreshes apps every 3 minutes
 
 ### Testing
 
-   sudo docker rm -f $(sudo docker ps -aq)
+	sudo ./scripts/init_setup.sh 
+	sudo ./scripts/launch.sh
+	sudo kubectl apply -f ./confs/app_will.yaml
+	sudo kubectl port-forward -n dev playground-xxxxxxxx 8081:8888
+	
+	# to delete the containers
+	sudo docker rm -f $(sudo docker ps -aq)
+
+https://127.0.0.1:8080/
 
 ## Ressources
 
