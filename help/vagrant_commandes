@@ -48,8 +48,25 @@ vagrant up
 #Fix ce warning : dpkg-preconfigure: unable to re-open stdin: No such file or directory
 export DEBIAN_FRONTEND=noninteractive
 
+# Init un environnement vagrant 
+vagrant init  
+
 # Trouver où sont stockées les VMs VirtualBox
 ls -la ~/VirtualBox\ VMs/
+puis faire rm -rf ~/VirtualBox\ VMs/
+
+# Si l'erreur persiste :
+VBoxManage list runningvms
+VBoxManage controlvm "Nom_de_la_VM" poweroff
+ ou 
+
+VBoxManage list vms
+VBoxManage unregistervm "Nom_de_VM" --delete
+
+ou 
+
+pkill -f VirtualBox
+
 
 # Changer le propriétaire récursivement
 sudo chown -R $(whoami):$(whoami) ~/VirtualBox\ VMs/
