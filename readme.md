@@ -12,9 +12,11 @@ It is divided into three parts you have to do in the following order:
 
 ### K3s
 
+Kubernetes is a tool used to orchestrate containers in a cluster. It allows to manage the deployment, scaling and operations of containerized applications.
+
 K3s is a Kubernetes distribution made by Rancher Labs. It is a lightweight Kubernetes distribution (compared to K8s) that is easy to install and use. Abscence of storage drivers and cloud. Docker needs to be installed if we want to use it.
 
-![alt text](misc/kube_architecture.png)
+![kubernetes architecture](misc/kube_architecture.png)
 
 #### Lexicon
 
@@ -29,6 +31,7 @@ K3s is a Kubernetes distribution made by Rancher Labs. It is a lightweight Kuber
  - Pod : a group of one or more containers, sharing same storage and network ressources. For example, you have a backend pod and a frontend pod. Each pod has its own IP address.
 
  - Service : a method to expose a network app, running on one or more pods in the cluster.
+
 
 ### Vagrant
 
@@ -137,6 +140,8 @@ ArgoCD is a CD tool for kubernetes, that can pull updated code from Git reposito
 	
 	# to delete the containers
 	sudo docker rm -f $(sudo docker ps -aq)
+	# to delete the volumes unused
+	sudo docker volume prune
 
 https://127.0.0.1:8080/
 
@@ -152,6 +157,9 @@ Vagrant doc - https://developer.hashicorp.com/vagrant/docs
 
 Kubernetes - https://kubernetes.io/docs/concepts/overview/
 
-K3d and ArgoCD - https://www.sokube.io/en/blog/gitops-on-a-laptop-with-k3d-and-argocd-en
+K3d and ArgoCD - 
+	https://www.sokube.io/en/blog/gitops-on-a-laptop-with-k3d-and-argocd-en
+	https://dev.to/danielcristho/k3d-getting-started-with-argocd-5c6l
+	https://yashguptaa.medium.com/application-deploy-to-kubernetes-with-argo-cd-and-k3d-8e29cf4f83ee
 
 Install k3d - https://technonagib.fr/installer-k3d/

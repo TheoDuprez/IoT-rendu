@@ -1,0 +1,647 @@
+global:
+
+  hosts:
+    domain: example.com
+
+  ingress:
+    configureCertmanager: false
+    provider: nginx
+    enabled: false
+
+  geo:
+    enabled: false
+
+  ## https://docs.gitlab.com/charts/charts/gitlab/kas/
+  kas:
+    enabled: true
+    service:
+      apiExternalPort: 8153 # port for connections from the GitLab backend
+    tls:
+      enabled: false
+      verify: true
+      # secretName:
+      # caSecretName:
+
+  workspaces:
+    ## If workspaces is enabled, you must provide a hostname under global.hosts
+    enabled: false
+
+  ## https://docs.gitlab.com/charts/charts/gitlab/spamcheck/
+  spamcheck:
+    enabled: false
+
+  ## https://docs.gitlab.com/charts/charts/globals#configure-gitlab-shell
+  shell:
+    authToken: {}
+    # secret:
+    # key:
+    hostKeys: {}
+      # secret:
+    ## https://docs.gitlab.com/charts/charts/globals#tcp-proxy-protocol
+    tcp:
+      proxyProtocol: false
+
+  ## Rails application secrets
+  ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#gitlab-rails-secret
+  ## If allowing shared-secrets generation, this is OPTIONAL.
+  railsSecrets: {}
+    # secret:
+
+  ## Rails generic setting, applicable to all Rails-based containers
+  rails:
+    bootsnap: # Enable / disable Shopify/Bootsnap cache
+      enabled: true
+    sessionStore:
+      sessionCookieTokenPrefix: ""
+
+  ## https://docs.gitlab.com/charts/charts/globals#configure-registry-settings
+  registry:
+    bucket: registry
+
+    certificate: {}
+      # secret:
+    httpSecret: {}
+      # secret:
+      # key:
+    notificationSecret: {}
+      # secret:
+      # key:
+
+    ## Container Registry database configuration
+    database:
+      password: {}
+      # user: registry
+      # name: registry
+    tls:
+      enabled: false
+      # secretName:
+    redis:
+      cache:
+        password: {}
+      rateLimiting:
+        password: {}
+      loadBalancing:
+        password: {}
+    # https://docs.docker.com/registry/notifications/#configuration
+    notifications: {}
+      # endpoints:
+      #   - name: FooListener
+      #     url: https://foolistener.com/event
+      #     timeout: 500ms
+      #     threshold: 10 # DEPRECATED: use maxretries instead https://gitlab.com/gitlab-org/container-registry/-/issues/1243.
+      #     maxretries: 5
+      #     backoff: 1s
+      #     headers:
+      #       FooBar: ['1', '2']
+      #       Authorization:
+      #         secret: gitlab-registry-authorization-header
+      #       SpecificPassword:
+      #         secret: gitlab-registry-specific-password
+      #         key: password
+      # events: {}
+
+    # Settings utilized by other services referencing registry:
+    enabled: true
+    host:
+    # port: 443
+    api:
+      protocol: http
+      serviceName: registry
+      port: 5000
+    tokenIssuer: gitlab-issuer
+
+  pages:
+    enabled: false
+    accessControl: false
+    path:
+    host:
+    port:
+    https: # default true
+    externalHttp: []
+    externalHttps: []
+    customDomainMode:
+    artifactsServer: true
+    localStore:
+      enabled: false
+      # path: /srv/gitlab/shared/pages
+    objectStore:
+      enabled: true
+      bucket: gitlab-pages
+      # proxy_download: true
+      connection: {}
+        # secret:
+        # key:
+    apiSecret: {}
+      # secret:
+      # key:
+    authSecret: {}
+      # secret:
+      # key:
+    namespaceInPath: false
+
+  ## GitLab Runner
+  ## Secret created according to https://docs.gitlab.com/charts/installation/secrets#gitlab-runner-secret
+  ## If allowing shared-secrets generation, this is OPTIONAL.
+  runner:
+    registrationToken: {}
+      # secret:
+
+  ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
+  ## Outgoing email server settings
+  smtp:
+    enabled: false
+    address: smtp.mailgun.org
+    port: 2525
+    user_name: ""
+    ## https://docs.gitlab.com/charts/installation/secrets#smtp-password
+    password:
+      secret: ""
+      key: password
+    # domain:
+    authentication: "plain"
+    starttls_auto: false
+    openssl_verify_mode: "peer"
+    open_timeout: 30
+    read_timeout: 60
+    pool: false
+
+  ## https://docs.gitlab.com/charts/charts/globals#outgoing-email
+  ## Email persona used in email sent by GitLab
+  email:
+    from: ""
+    display_name: GitLab
+    reply_to: ""
+    subject_suffix: ""
+    smime:
+      enabled: false
+      secretName: ""
+      keyName: "tls.key"
+      certName: "tls.crt"
+
+  ## Timezone for containers.
+  time_zone: UTC
+
+  ## Global Service Annotations and Labels
+  service:
+    labels: {}
+    annotations: {}
+
+  ## Global Deployment Annotations
+  deployment:
+    annotations: {}
+
+
+  # Setting a global nodeAffinity only applies to the registry chart for now.
+  # See issue https://gitlab.com/gitlab-com/gl-infra/production-engineering/-/issues/25403 for more information
+
+  nodeAffinity:
+
+  antiAffinity: soft
+  affinity:
+    podAntiAffinity:
+      topologyKey: "kubernetes.io/hostname"
+    nodeAffinity:
+      key: topology.kubernetes.io/zone
+      values: []
+
+  # Priority class assigned to pods, may be overridden for individual components
+  # https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
+  priorityClassName: ""
+
+  ## https://docs.gitlab.com/charts/charts/globals#configure-workhorse-settings
+  ## Global settings related to Workhorse
+  workhorse:
+    serviceName: webservice-default
+    # scheme:
+    # host:
+    # port:
+    ## https://docs.gitlab.com/charts/installation/secrets#gitlab-workhorse-secret
+    # secret:
+    # key:
+    tls:
+      enabled: false
+
+  ## https://docs.gitlab.com/charts/charts/globals#configure-webservice
+  webservice:
+    workerTimeout: 60
+
+  ## https://docs.gitlab.com/charts/charts/globals#custom-certificate-authorities
+  # configuration of certificates container & custom CA injection
+  certificates:
+    image:
+      repository: registry.gitlab.com/gitlab-org/build/cng/certificates
+      # Default tag is `global.gitlabVersion` or `master` if the former one is undefined.
+      # tag: master
+      # pullPolicy: IfNotPresent
+      # pullSecrets: []
+    customCAs: []
+    # - secret: custom-CA
+    # - secret: more-custom-CAs
+    #   keys:
+    #     - custom-ca-1.crt
+    # - configMap: custom-CA-cm
+    # - configMap: more-custom-CAs-cm
+    #   keys:
+    #     - custom-ca-2.crt
+    #     - custom-ca-3.crt
+
+  ## kubectl image used by hooks to carry out specific jobs
+  kubectl:
+    image:
+      repository: registry.gitlab.com/gitlab-org/build/cng/kubectl
+      # Default tag is `global.gitlabVersion` or `master` if the former one is undefined.
+      # tag: master
+      # pullPolicy: IfNotPresent
+      # pullSecrets: []
+    securityContext:
+      # in most base images, this is `nobody:nogroup`
+      runAsUser: 65534
+      fsGroup: 65534
+      seccompProfile:
+        type: "RuntimeDefault"
+  gitlabBase:
+    image:
+      repository: registry.gitlab.com/gitlab-org/build/cng/gitlab-base
+      # Default tag is `global.gitlabVersion` or `master` if the former one is undefined.
+      # Charts using this image as init container support further overrides with `init.image.tag`.
+      # tag: master
+      # pullPolicy: IfNotPresent
+      # pullSecrets: []
+
+  ## https://docs.gitlab.com/charts/charts/globals#service-accounts
+  serviceAccount:
+    enabled: false
+    create: true
+    annotations: {}
+    automountServiceAccountToken: false
+    ## Name to be used for serviceAccount, otherwise defaults to chart fullname
+    # name:
+
+  ## https://docs.gitlab.com/charts/charts/globals/#tracing
+  tracing:
+    connection:
+      string: ""
+    urlTemplate: ""
+
+  zoekt:
+    gateway:
+      basicAuth: {}
+    indexer:
+      internalApi: {}
+
+  ## https://docs.gitlab.com/ci/secrets/
+  ## Experimental, unsupported
+  openbao:
+    enabled: false
+    host:
+    https:
+    url: # If present, must be a complete URI
+
+  ## https://docs.gitlab.com/charts/charts/globals
+  extraEnv: {}
+  #   SOME_KEY: some_value
+  #   SOME_OTHER_KEY: some_other_value
+
+  ## https://docs.gitlab.com/charts/charts/globals
+  extraEnvFrom: {}
+  #   MY_NODE_NAME:
+  #     fieldRef:
+  #       fieldPath: spec.nodeName
+  #   MY_CPU_REQUEST:
+  #     resourceFieldRef:
+  #       containerName: test-container
+  #       resource: requests.cpu
+  #   SECRET_THING:
+  #     secretKeyRef:
+  #       name: special-secret
+  #       key: special_token
+  #       # optional: boolean
+  #   CONFIG_STRING:
+  #     configMapKeyRef:
+  #       name: useful-config
+  #       key: some-string
+  #       # optional: boolean
+
+  ## https://docs.gitlab.com/charts/charts/globals/#jobs
+  job:
+    nameSuffixOverride:
+
+  traefik:
+    apiVersion: "" # newer apiVersion: "traefik.io/v1alpha1"
+
+## End of global
+
+upgradeCheck:
+  enabled: true
+  image: {}
+    # repository:
+    # tag:
+    # pullPolicy: IfNotPresent
+    # pullSecrets: []
+  securityContext:
+    # in alpine/debian/busybox based images, this is `nobody:nogroup`
+    runAsUser: 65534
+    fsGroup: 65534
+    seccompProfile:
+      type: "RuntimeDefault"
+  ## Allow to overwrite the specific security context under which the container is running.
+  containerSecurityContext:
+    runAsUser: 65534
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    capabilities:
+      drop: [ "ALL" ]
+  tolerations: []
+  annotations: {}
+  configMapAnnotations: {}
+  resources:
+    requests:
+      cpu: 50m
+  priorityClassName: ""
+
+## Settings for the Let's Encrypt ACME Issuer
+# certmanager-issuer:
+#   # The email address to register certificates requested from Let's Encrypt.
+#   # Required if using Let's Encrypt.
+#   email: email@example.com
+
+
+## Installation of certmananger.
+## This value replaces `certmanager.install` to allow certmanager schema validation to pass.
+## See dependencies in Chart.yaml for current version
+installCertmanager: true
+
+## Configuration of jetstack/cert-manager
+certmanager:
+  installCRDs: true
+  nameOverride: certmanager
+
+## https://docs.gitlab.com/charts/charts/nginx/
+## https://docs.gitlab.com/charts/architecture/decisions#nginx-ingress
+## Installation & configuration of charts/ingress-nginx:
+nginx-ingress: &nginx-ingress
+  enabled: false
+
+prometheus:
+  install: false
+  
+## Configuration of Redis
+## https://docs.gitlab.com/charts/architecture/decisions#redis
+## https://docs.gitlab.com/charts/installation/deployment.html#redis
+redis:
+  install: true
+  image:
+    repository: bitnamilegacy/redis
+  auth:
+    existingSecret: gitlab-redis-secret
+    existingSecretKey: redis-password
+    usePasswordFiles: true
+  architecture: standalone
+  cluster:
+    enabled: false
+  metrics:
+    enabled: true
+    image:
+      repository: bitnamilegacy/redis-exporter
+  sentinel:
+    enabled: false
+    image:
+      repository: bitnamilegacy/redis-sentinel
+  kubectl:
+    enabled: false
+    image:
+      repository: bitnamilegacy/kubectl
+  sysctl:
+    enabled: false
+    image:
+      repository: bitnamilegacy/os-shell
+  volumePermissions:
+    enabled: false
+    image:
+      repository: bitnamilegacy/os-shell
+
+## Installation & configuration of stable/postgresql
+## See dependencies in Chart.yaml for current version
+postgresql:
+  install: true
+  auth:
+    ## These need to be set, for the sake of bitnami/postgresql upgrade patterns.
+    ## They are overridden by use of `existingSecret`
+    password: bogus-satisfy-upgrade
+    postgresPassword: bogus-satisfy-upgrade
+    ##
+    usePasswordFiles: false
+    existingSecret: '{{ include "gitlab.psql.password.secret" . }}'
+    secretKeys:
+      adminPasswordKey: postgresql-postgres-password
+      userPasswordKey: '{{ include "gitlab.psql.password.key" $ }}'
+  image:
+    repository: bitnamilegacy/postgresql
+    tag: 16.6.0
+  volumePermissions:
+    enabled: false
+    image:
+      repository: bitnamilegacy/os-shell
+  primary:
+    initdb:
+      scriptsConfigMap: '{{ include "gitlab.psql.initdbscripts" $}}'
+    extraVolumeMounts:
+      - name: custom-init-scripts
+        mountPath: /docker-entrypoint-preinitdb.d/init_revision.sh
+        subPath: init_revision.sh
+      - name: registry-database-password
+        mountPath: /etc/gitlab/postgres/registry_database_password
+        subPath: database_password
+        readOnly: true
+    extraVolumes:
+      - name: registry-database-password
+        projected:
+          sources:
+            - secret:
+                name: '{{ include "gitlab.registry.database.password.secret" . }}'
+                items:
+                  - key: '{{ include "gitlab.registry.database.password.key" . }}'
+                    path: database_password
+    podAnnotations:
+      postgresql.gitlab/init-revision: "1"
+  metrics:
+    enabled: true
+    image:
+      repository: bitnamilegacy/postgres-exporter
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9187"
+        gitlab.com/prometheus_scrape: "true"
+        gitlab.com/prometheus_port: "9187"
+
+    ## Optionally define additional custom metrics
+    ## ref: https://github.com/wrouesnel/postgres_exporter#adding-new-metrics-via-a-config-file
+
+## Installation & configuration charts/registry
+## https://docs.gitlab.com/charts/architecture/decisions#registry
+## https://docs.gitlab.com/charts/charts/registry/
+# registry:
+#   enabled: false
+
+## Automatic shared secret generation
+## https://docs.gitlab.com/charts/installation/secrets
+## https://docs.gitlab.com/charts/charts/shared-secrets.html
+shared-secrets:
+  enabled: true
+  rbac:
+    create: true
+  selfsign:
+    image:
+      # pullPolicy: IfNotPresent
+      # pullSecrets: []
+      repository: registry.gitlab.com/gitlab-org/build/cng/cfssl-self-sign
+      # Default tag is `master`, overridable by `global.gitlabVersion`.
+      # tag: master
+    keyAlgorithm: "rsa"
+    keySize: "4096"
+    expiry: "3650d"
+    caSubject: "GitLab Helm Chart"
+  env: production
+  serviceAccount:
+    enabled: true
+    create: true
+    name: # Specify a pre-existing ServiceAccount name
+  resources:
+    requests:
+      cpu: 50m
+  securityContext:
+    # in debian/alpine based images, this is `nobody:nogroup`
+    runAsUser: 65534
+    fsGroup: 65534
+    seccompProfile:
+      type: "RuntimeDefault"
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    capabilities:
+      drop: [ "ALL" ]
+  tolerations: []
+  podLabels: {}
+  annotations: {}
+
+## Installation & configuration of gitlab/gitlab-runner
+## See dependencies in Chart.yaml for current version
+gitlab-runner:
+  install: true
+  rbac:
+    create: true
+  runners:
+    locked: false
+    # Set secret to an arbitrary value because the runner chart renders the gitlab-runner.secret template only if it is not empty.
+    # The parent/GitLab chart overrides the template to render the actual secret name.
+    secret: "nonempty"
+    config: |
+      [[runners]]
+        [runners.kubernetes]
+        image = "ubuntu:22.04"
+        {{- if .Values.global.minio.enabled }}
+        [runners.cache]
+          Type = "s3"
+          Path = "gitlab-runner"
+          Shared = true
+          [runners.cache.s3]
+            ServerAddress = {{ include "gitlab-runner.cache-tpl.s3ServerAddress" . }}
+            BucketName = "runner-cache"
+            BucketLocation = "us-east-1"
+            Insecure = false
+        {{ end }}
+  podAnnotations:
+    gitlab.com/prometheus_scrape: "true"
+    gitlab.com/prometheus_port: 9252
+  podSecurityContext:
+    seccompProfile:
+      type: "RuntimeDefault"
+
+traefik:
+  install: false
+  ports:
+    gitlab-shell:
+      expose: true
+      port: 2222
+      exposedPort: 22
+
+## Settings for individual sub-charts under GitLab
+## Note: Many of these settings are configurable via globals
+gitlab:
+  ## https://docs.gitlab.com/charts/charts/gitlab/toolbox
+  toolbox:
+    replicas: 1
+    antiAffinityLabels:
+      matchLabels:
+        app: gitaly
+  ## https://docs.gitlab.com/charts/charts/gitlab/migrations
+  #   migrations:
+  #     enabled: false
+  ## https://docs.gitlab.com/charts/charts/gitlab/webservice
+  #   webservice:
+  #     enabled: false
+  ## https://docs.gitlab.com/charts/charts/gitlab/sidekiq
+  #   sidekiq:
+  #     enabled: false
+  ## https://docs.gitlab.com/charts/charts/gitlab/gitaly
+  #   gitaly:
+  ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-shell
+  #   gitlab-shell:
+  #     enabled: false
+  ## https://docs.gitlab.com/charts/charts/gitlab/gitlab-pages
+  #   gitlab-pages:
+  ## https://docs.gitlab.com/charts/charts/gitlab/kas
+  #   kas:
+  ## https://docs.gitlab.com/charts/charts/gitlab/praefect
+  #   praefect:
+
+## Installation & configuration of gitlab/gitlab-zoekt
+gitlab-zoekt:
+  install: false
+  gateway:
+    basicAuth:
+      enabled: false # Basic auth is no longer needed because we've switched to using JWT instead
+      secretName: '{{ include "gitlab.zoekt.gateway.basicAuth.secretName" $ }}'
+  indexer:
+    internalApi:
+      enabled: true
+      secretName: '{{ include "gitlab.zoekt.indexer.internalApi.secretName" $ }}'
+      secretKey: '{{ include "gitlab.zoekt.indexer.internalApi.secretKey" $ }}'
+      gitlabUrl: '{{ include "gitlab.zoekt.indexer.internalApi.gitlabUrl" $ }}'
+
+## Installation & configuration of OpenBao
+openbao:
+  install: false
+  # Disable Openbao managed unseal secret and mount secret managed by shared secrets.
+  staticUnsealSecret:
+    generate: false
+  extraVolumes: |
+    - name: unseal
+      secret:
+        secretName: '{{ template "gitlab.openbao.unseal.secret" . }}'
+  extraVolumeMounts: |
+    - name: unseal
+      mountPath: /srv/openbao/keys/gl-unseal-1
+      subPath: '{{ template "gitlab.openbao.unseal.key" . }}'
+      readOnly: true
+  psql: {}
+  config:
+    unseal:
+      static:
+        enabled: true
+        currentKeyId: "gl-unseal-1"
+        currentKey: "/srv/openbao/keys/gl-unseal-1"
+    # Use external hostname in OpenBao auth.
+    initialize:
+      oidcDiscoveryUrl: '{{ include "gitlab.gitlab.url" . }}'
+      boundIssuer: '{{ include "gitlab.gitlab.url" . }}'
+    storage:
+      postgresql:
+        # Set predefined keys to empty values to enable us merging these keys
+        # with the main DB settings.
+        connection:
+          host: ''
+          database: ''
+          username: ''
+          sslMode: ''
