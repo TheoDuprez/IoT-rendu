@@ -1,6 +1,10 @@
 global:
+  appConfig:
+    edition: ce
   hosts:
     domain: iot.local.gitlab
+    externalIP: 127.0.0.1
+    https: false
 
   ingress:
     configureCertmanager: false
@@ -27,10 +31,14 @@ registry:
 gitlab-runner:
   install: false
 
-# gitlab:
-#   webservice:
-#     minReplicas: 1
-#     maxReplicas: 1
-#   sidekiq:
-#     minReplicas: 1
-#     maxReplicas: 1
+gitlab:
+  webservice:
+    minReplicas: 1
+    maxReplicas: 1
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 1
+  gitaly:
+    minReplicas: 1
+  gitlab-shell:
+    minReplicas: 1
