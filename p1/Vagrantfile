@@ -8,8 +8,8 @@ Vagrant.configure("2") do |config|
         tduprezS.vm.provision "shell", path: "./scripts/master_node_install.sh"
         
         tduprezS.vm.provider "virtualbox" do |v|
-            v.cpus = 2
-            v.memory = 2048
+            v.cpus = 1
+            v.memory = 512
         end
     end
     
