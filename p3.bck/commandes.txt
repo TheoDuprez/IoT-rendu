@@ -1,7 +1,6 @@
 # Docker 
 sudo usermod -aG docker $USER
 
-
 # Create a cluster : 
 k3d cluster create mycluster --agents 2 --servers 1 -p "8888:80@loadbalancer"
 
@@ -120,3 +119,5 @@ sed -i 's/wil42\/playground:v1/wil42\/playground:v2/g' dev/deployment.yaml
 git add .
 git commit -m "Update to v2"
 git push
+
+argocd admin initial-password -n argocd

@@ -20,6 +20,7 @@ vagrant reload --provision : redémarre la VM et relance la provision
 
 Résumé :
 
+-----------------------------------------------------------------------------------------
 | Action                           | Commande          | Fréquence                      |
 | -------------------------------- | ----------------- | ------------------------------ |
 | Initialiser un projet Vagrant    | `vagrant init`    | Une seule fois au début        |

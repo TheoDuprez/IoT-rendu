@@ -6,12 +6,14 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<TON_LOGIN>/<NOM_DU_REPO>
+    repoURL: https://github.com/lciullo/iot_lciullo.git
     targetRevision: HEAD
-    path: dev
+    path: deployment
+
   destination:
     server: https://kubernetes.default.svc
     namespace: dev
+
   syncPolicy:
     automated:
       prune: true

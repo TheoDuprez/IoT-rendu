@@ -1,13 +1,4 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
 Vagrant.configure("2") do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
-
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://vagrantcloud.com/search.
   # lciulloS 192.168.56.110
   config.vm.synced_folder ".", "/vagrant"
 
@@ -16,9 +7,8 @@ Vagrant.configure("2") do |config|
     server_vm.vm.hostname = "lciulloS"
     server_vm.vm.network "private_network", ip: "192.168.56.110"
     server_vm.vm.provider "virtualbox" do |vb|
-      # Customize the amount of memory on the VM:
-      vb.memory = "1024" # pour 512 MB de RAM (ou "1024" pour 1 GB)
-      vb.cpus = 1       # allouer 1 CPU
+      vb.memory = "1024"
+      vb.cpus = 1
     end
     server_vm.vm.provision "shell", path: "install-k3s-master.sh"
   end
@@ -29,43 +19,9 @@ Vagrant.configure("2") do |config|
     server_worker_vm.vm.hostname = "lciulloSW"
     server_worker_vm.vm.network "private_network", ip: "192.168.56.111"
     server_worker_vm.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024" # pour 512 MB de RAM (ou "1024" pour 1 GB)
-      vb.cpus = 1       # allouer 1 CPU
+      vb.memory = "1024"
+      vb.cpus = 1 
     end
     server_worker_vm.vm.provision "shell", path: "install-k3s-worker.sh"
   end 
-
-
-  
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine and only allow access
-  # via 127.0.0.1 to disable public access
-  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
-
-
-
-  # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
-  #
-
-
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
-  # SHELL
 end

@@ -22,3 +22,5 @@ ip a show eth1
 If you see an active k3s service, it means that this machine is in master (controller) mode.
 vagrant ssh lciulloSW
 sudo systemctl status k3s
+
+#Lastes version of k3s
