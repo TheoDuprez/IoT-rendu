@@ -1,25 +1,25 @@
 # Part 1 : Part 1 (K3s & Vagrant)
 
-.PHONY: help up clean destroy fclean vbox-clean verify-status verify-names verify-ips verify-resources verify-k3s verify-all 
+.PHONY: help up clean destroy fclean vbox-clean status names ips resources k3s all check-active-vms 
 
 .DEFAULT_GOAL := help
 
 help:
 	@echo "\033[1;36m=== Inception of Things - Part 1 ===\033[0m"
 	@echo "\033[1;33mAvailable commands:\033[0m"
-	@echo "  \033[1;32mmake up\033[0m            - Creates and starts the VMs defined in the Vagrantfile."
-	@echo "  \033[1;32mmake clean\033[0m         - Deletes .vagrant and node-token.txt"
-	@echo "  \033[1;32mmake destroy\033[0m       - Destroys VMs with Vagrant"
-	@echo "  \033[1;32mmake vbox-clean\033[0m    - Removes all VirtualBox VMs (by UUID)"
-	@echo "  \033[1;32mmake fclean\033[0m        - Full clean (destroy VMs + remove .vagrant)"
+	@echo "  \033[1;32mmake up\033[0m           	- Creates and starts the VMs defined in the Vagrantfile."
+	@echo "  \033[1;32mmake clean\033[0m        	- Deletes .vagrant and node-token.txt"
+	@echo "  \033[1;32mmake destroy\033[0m      	- Destroys VMs with Vagrant"
+	@echo "  \033[1;32mmake vbox-clean\033[0m   	- Removes all VirtualBox VMs (by UUID)"
+	@echo "  \033[1;32mmake fclean\033[0m       	- Full clean (destroy VMs + remove .vagrant)"
+	@echo "  \033[1;32mmake check-vms\033[0m	- Check if there are active VMs"
 	@echo ""
 	@echo "\033[1;33mValidation commands:\033[0m"
-	@echo "  \033[1;32mmake verify-status\033[0m  - Check VM status"
-	@echo "  \033[1;32mmake verify-names\033[0m   - Verify machine names"
-	@echo "  \033[1;32mmake verify-ips\033[0m     - Verify IP addresses"
-	@echo "  \033[1;32mmake verify-resources\033[0m - Check RAM and CPU"
-	@echo "  \033[1;32mmake verify-k3s\033[0m     - Check K3s installation"
-	@echo "  \033[1;32mmake verify-all\033[0m     - Run all verifications"
+	@echo "  \033[1;32mmake status\033[0m  		- Check VM status"
+	@echo "  \033[1;32mmake names\033[0m   		- Verify machine names"
+	@echo "  \033[1;32mmake ips\033[0m     		- Verify IP addresses"
+	@echo "  \033[1;32mmake resources\033[0m 	- Check RAM and CPU"
+	@echo "  \033[1;32mmake k3s\033[0m     		- Check K3s installation"
 	@echo ""
 
 up: clean 
@@ -46,6 +46,18 @@ vbox-clean:
 	
 fclean: destroy clean vbox-clean
 	@echo "\033[1;31mFull cleanup completed!\033[0m"
+
+
+check-vms:
+	@echo "\033[1;36m=== Active VMs Check ===\033[0m"
+	@active_count=$$(vboxmanage list vms | wc -l); \
+	if [ $$active_count -eq 0 ]; then \
+		echo "\033[1;32m✓ No active VMs\033[0m"; \
+	else \
+		echo "\033[1;33m⚠ Active VMs found:\033[0m"; \
+		vboxmanage list vms; \
+		echo "\033[1;33mRun 'make fclean' to remove them\033[0m"; \
+	fi
 
 status:
 	@echo "\033[1;36m=== VM Status ===\033[0m"
@@ -77,3 +89,5 @@ k3s:
 
 verify-all: verify-status verify-names verify-ips verify-resources verify-k3s
 	@echo "\033[1;32m✓ All verifications completed!\033[0m"
+
+
