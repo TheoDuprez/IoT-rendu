@@ -49,3 +49,5 @@ kubectl apply -f https://raw.githubusercontent.com/TheoDuprez/tduprez_k3d_infra/
 
 argocd admin initial-password -n argocd
 nohup kubectl port-forward svc/argocd-server -n argocd 8080:443 > /dev/null 2>&1 &
+
+# faire un sed et makefile pour upgrade et downgrade auto
