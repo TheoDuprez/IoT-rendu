@@ -1,122 +1,72 @@
 #!/bin/bash
 
-set -e
-
-### Colors ###
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-
-echo -e "${BLUE}=== Argo CD + GitLab Configuration ===${NC}"
-
 ARGOCD_NAMESPACE="argocd"
 GITLAB_NAMESPACE="gitlab"
-GITLAB_DOMAIN="gitlab.local"
-GITHUB_REPO="${1:-}"  # Optional: GitHub repo for application
+# --- ACTION REQUISE ---
+# Remplacez la ligne ci-dessous par votre Jeton d'Accès Personnel GitLab
+# Via interface => edit profile 
+# Puis a gauche => Personnal access tokens
+# Créez un token avec les scopes "api" et "read_repository"
+# bien ajouter le token 
+# Exemple: GITLAB_PAT="glpat-xxxxxxxxxxxxxxxxxxxx"
+# A automatiser via glab ou API GitLab si besoin
+GITLAB_PAT=""
 
-# Check if cluster is running
-if ! kubectl cluster-info >/dev/null 2>&1; then
-    echo -e "${RED}✗ Cluster is not running${NC}"
-    exit 1
-fi
+# --------------------
 
-# Install Argo CD if not already installed
-echo -e "${BLUE}Setting up Argo CD...${NC}"
+# Use internal Kubernetes DNS for GitLab
+GITLAB_IP=$(kubectl get svc -n gitlab gitlab-webservice-default -o jsonpath='{.spec.clusterIP}' 2>/dev/null)
+GITLAB_PORT="8181" # Port HTTP interne de GitLab
+GITLAB_REPO="http://${GITLAB_IP}:${GITLAB_PORT}/root/iot_lciullo.git"
 
-if kubectl get deployment argocd-server -n "$ARGOCD_NAMESPACE" >/dev/null 2>&1; then
-    echo -e "${YELLOW}Argo CD already installed${NC}"
-else
-    echo -e "${BLUE}Installing Argo CD...${NC}"
-    kubectl create namespace "$ARGOCD_NAMESPACE" 2>/dev/null || true
-    kubectl apply -n "$ARGOCD_NAMESPACE" -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    
-    echo -e "${YELLOW}Waiting for Argo CD to be ready...${NC}"
-    kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n "$ARGOCD_NAMESPACE" --timeout=300s || true
-fi
+# Adresse du dépôt GitLab via le service interne Kubernetes
+# http://ip:8181/root/iot-lciullo.git
 
-echo -e "${GREEN}✓ Argo CD is ready${NC}"
+# Install Argo CD
+echo "Installing Argo CD..."
 
-# Get Argo CD admin password
-echo ""
-echo -e "${YELLOW}Argo CD Initial Admin Password:${NC}"
-ARGOCD_PASSWORD=$(kubectl -n "$ARGOCD_NAMESPACE" get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-echo "$ARGOCD_PASSWORD"
-
-# Get GitLab root password
-echo ""
-echo -e "${YELLOW}GitLab Initial Root Password:${NC}"
-GITLAB_PASSWORD=$(kubectl -n "$GITLAB_NAMESPACE" get secret gitlab-gitlab-initial-root-password -o jsonpath='{.data.password}' | base64 --decode 2>/dev/null || echo "Not found - check manually")
-echo "$GITLAB_PASSWORD"
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 echo ""
-echo -e "${BLUE}Configuring Argo CD to use GitLab...${NC}"
+echo "Waiting for Argo CD server pod to be running..."
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=600s
+echo "✓ Argo CD server pod is ready!"
 
-# Port-forward to Argo CD (if needed for further setup)
-echo -e "${YELLOW}Argo CD Port Forwarding:${NC}"
-echo "In another terminal, run:"
-echo "  kubectl port-forward svc/argocd-server -n $ARGOCD_NAMESPACE 8080:443"
-echo "Then access: https://localhost:8080"
-echo "  Username: admin"
-echo "  Password: $ARGOCD_PASSWORD"
+# Create a secret for the private GitLab repository
+echo ""
+echo "Creating GitLab repository secret for Argo CD..."
+kubectl apply -n argocd -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gitlab-repo-secret
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: git
+  url: ${GITLAB_REPO}
+  username: root
+  password: ${GITLAB_PAT}
+  insecure: "true"
+EOF
 
+# Create and apply Argo CD Application
 echo ""
-echo -e "${BLUE}GitLab Access Information:${NC}"
-echo "Add to /etc/hosts:"
-echo "  127.0.0.1 $GITLAB_DOMAIN"
-echo ""
-echo "Access GitLab at: http://$GITLAB_DOMAIN"
-echo "  Username: root"
-echo "  Password: (see above)"
+echo "Creating Argo CD Application..."
 
-# Create GitLab repository credentials secret (optional)
-echo ""
-echo -e "${BLUE}Creating GitLab credentials secret for Argo CD...${NC}"
-
-# This secret will be used by Argo CD to access GitLab repositories
-GITLAB_TOKEN="${GITLAB_PASSWORD}"  # You should generate a proper token
-
-kubectl create secret generic gitlab-credentials \
-    -n "$ARGOCD_NAMESPACE" \
-    --from-literal=url="http://gitlab.local" \
-    --from-literal=password="$GITLAB_TOKEN" \
-    --from-literal=username="root" \
-    --dry-run=client -o yaml | kubectl apply -f -
-
-echo -e "${GREEN}✓ GitLab credentials secret created${NC}"
-
-echo ""
-echo -e "${GREEN}=== Configuration Complete ===${NC}"
-
-echo ""
-echo -e "${YELLOW}Manual Steps Required:${NC}"
-echo ""
-echo "1. Add to your /etc/hosts:"
-echo "   127.0.0.1 gitlab.local"
-echo ""
-echo "2. Create a GitLab repository with your application manifests"
-echo "   (deployment.yaml, service.yaml, etc.)"
-echo ""
-echo "3. Create an Argo CD Application via Argo CD UI:"
-echo "   - Repository URL: http://gitlab.local/root/your-repo.git"
-echo "   - Path: ./"
-echo "   - Destination: https://kubernetes.default.svc"
-echo "   - Namespace: dev"
-echo ""
-echo "4. Or apply Argo CD Application manifest:"
-cat > /tmp/argocd-app-template.yaml <<'EOF'
+kubectl apply -f - <<EOF
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: gitlab-app
+  name: wil-playground-app
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: http://gitlab.local/root/iot-application
+    repoURL: $GITLAB_REPO
     targetRevision: main
-    path: .
+    path: deployment
   destination:
     server: https://kubernetes.default.svc
     namespace: dev
@@ -124,13 +74,25 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-    - CreateNamespace=true
 EOF
-echo "   kubectl apply -f /tmp/argocd-app-template.yaml"
+
+echo "✓ Application created"
+
 echo ""
-echo "5. Verify everything is working:"
-echo "   kubectl get namespaces"
-echo "   kubectl get pods -n argocd"
-echo "   kubectl get pods -n gitlab"
-echo "   kubectl get pods -n dev"
+echo "=== Argo CD setup complete ==="
+
+# Get passwords
+echo ""
+echo "Argo CD Initial Admin Password:"
+kubectl -n "$ARGOCD_NAMESPACE" get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+echo ""
+
+echo ""
+echo "GitLab Initial Root Password:"
+kubectl -n "$GITLAB_NAMESPACE" get secret gitlab-gitlab-initial-root-password -o jsonpath='{.data.password}' | base64 --decode 2>/dev/null || echo "Not found - check manually"
+echo ""
+
+echo ""
+echo "To access Argo CD UI:"
+echo "  kubectl port-forward svc/argocd-server -n argocd 8080:443"
+echo "  Then open: https://localhost:8080"

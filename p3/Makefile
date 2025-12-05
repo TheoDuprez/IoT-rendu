@@ -152,8 +152,6 @@ test-app:
 		echo "  You may need to port-forward: kubectl port-forward svc/wil-playground-service 8888:80 -n $(APP_NAMESPACE)"; \
 	fi
 
-
-
 # ============================================================================
 # CLEANUP COMMANDS
 # ============================================================================

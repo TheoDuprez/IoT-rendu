@@ -7,14 +7,13 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
-NC='\033[0m' # No Color
-
-echo -e "${BLUE}=== GitLab Minimal Installation ===${NC}"
+NC='\033[0m' 
 
 NAMESPACE="gitlab"
 RELEASE_NAME="gitlab"
-DOMAIN="gitlab.local"
+DOMAIN="local"
 
+echo -e "${BLUE}=== GitLab Installation ===${NC}"
 # Check if cluster is running
 if ! kubectl cluster-info >/dev/null 2>&1; then
     echo -e "${RED}✗ Cluster is not running. Please run setup_cluster.sh first.${NC}"
@@ -47,7 +46,7 @@ else
         --set global.ingress.provider=nginx \
         --set postgresql.install=true \
         --set redis.install=true \
-        --set gitaly.persistence.enabled=false \
+        --set gitaly.persistence.enabled=true \
         --set gitlab-runner.install=false \
         --set prometheus.install=false \
         --set installCertmanager=false \
@@ -79,9 +78,9 @@ echo -e "${GREEN}✓ GitLab installation complete${NC}"
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo "1. Add this to your /etc/hosts file:"
-echo "   127.0.0.1 gitlab.gitlab.local"
+echo "   127.0.0.1 gitlab.local"
 echo ""
-echo "2. Access GitLab at: http://gitlab.gitlab.local"
+echo "2. Access GitLab at: http://gitlab.local"
 echo ""
 echo "3. Get initial root password:"
 echo "   kubectl get secret -n gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo"
