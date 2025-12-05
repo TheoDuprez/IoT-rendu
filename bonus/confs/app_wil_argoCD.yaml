@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: ''
+    repoURL: 'http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/root/tgellon_iot_willapp'
     targetRevision: main
     path: .
   destination:

@@ -62,6 +62,19 @@ git push -u gitlab --tags
 echo "Repository successfully uploaded to GitLab!"
 echo "GitLab project URL: $GITLAB_URL/root/$GITLAB_PROJECT_NAME"
 
+# Add GitLab repository to ArgoCD
+GITLAB_INTERNAL_URL="http://gitlab-webservice-default.gitlab.svc.cluster.local:8181"
+REPO_URL="${GITLAB_INTERNAL_URL}/root/tgellon_iot_willapp"
+
+kubectl exec -n argocd deployment/argocd-server -- \
+  argocd repo add "$REPO_URL" \
+    --username root \
+    --password "$GITLAB_TOKEN" \
+    --insecure-skip-server-verification \
+    --upsert
+
+echo "Repository configured successfully!"
+
 # Clean up
 cd -
 rm -rf $TEMP_DIR
