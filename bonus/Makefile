@@ -169,8 +169,8 @@ clean-argocd:
 
 clean-temp:
 	@echo "\033[1;36m=== Cleaning temporary files ===\033[0m"
-	@rm -f /tmp/gitlab_pat.txt
-	@rm -rf /tmp/iot_lciullo
+	@if [ -f /tmp/gitlab_pat.txt ]; then rm -f /tmp/gitlab_pat.txt && echo "  Removed /tmp/gitlab_pat.txt"; fi
+	@if [ -d /tmp/iot_lciullo ]; then rm -rf /tmp/iot_lciullo && echo "  Removed /tmp/iot_lciullo"; fi
 	@echo "\033[1;32m✓ Temporary files cleaned\033[0m"
 
 fclean: clean-argocd uninstall-gitlab cluster-delete clean-temp

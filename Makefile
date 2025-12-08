@@ -33,6 +33,12 @@ clean-p3:
 	@cd p3 && make fclean
 	@echo "\033[1;32m✓ Part 3 cleaned\033[0m"
 
+
+clean-bonus:
+	@echo "\033[1;36m=== Cleaning Bonus ===\033[0m"
+	@cd bonus && make fclean
+	@echo "\033[1;32m✓ Bonus cleaned\033[0m"
+
 # ============================================================================
 # FULL CLEANUP
 # ============================================================================
