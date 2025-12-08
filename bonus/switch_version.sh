@@ -32,14 +32,15 @@ echo "Switching to version: $VERSION"
 # Detect if running inside cluster or locally
 if kubectl cluster-info &>/dev/null; then
     # Running locally - need port-forward
-    GITLAB_URL="http://root:${GITLAB_PAT}@${GITLAB_HOST}:${GITLAB_PORT}/${GITLAB_USER}/${GITLAB_PROJECT_NAME}.git"
-    
     # Check if port-forward is active
     if ! nc -z localhost 8181 2>/dev/null; then
         echo "Error: GitLab port-forward not active!"
         echo "Run in another terminal: kubectl -n gitlab port-forward svc/gitlab-webservice-default 8181:8181"
         exit 1
     fi
+    
+    # Use localhost since we're using port-forward
+    GITLAB_URL="http://root:${GITLAB_PAT}@localhost:${GITLAB_PORT}/${GITLAB_USER}/${GITLAB_PROJECT_NAME}.git"
 else
     # Running inside cluster
     GITLAB_URL="http://root:${GITLAB_PAT}@${GITLAB_INTERNAL_HOST}:${GITLAB_PORT}/${GITLAB_USER}/${GITLAB_PROJECT_NAME}.git"

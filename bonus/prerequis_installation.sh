@@ -47,12 +47,13 @@ else
     helm repo update
 fi
 
-#if command -v glab >/dev/null 2>&1; then
-#    echo "glab (GitLab CLI) is already installed."
-#else
-#    echo "glab (GitLab CLI) is not installed. Installing..."
-#    curl -sL https://gitlab.com/gitlab-org/cli/-/releases/latest/downloads/glab_Linux_x86_64.tar.gz | tar xz
-#    sudo mv glab /usr/local/bin/
-#fi
+
+if command -v glab >/dev/null 2>&1; then
+    echo "glab (GitLab CLI) is already installed."
+else
+    echo "glab (GitLab CLI) is not installed. Installing..."
+    curl -sL https://gitlab.com/gitlab-org/cli/-/releases/latest/downloads/glab_Linux_x86_64.tar.gz | tar xz
+    sudo mv glab /usr/local/bin/
+fi
 
 echo "All tools are installed or already present."

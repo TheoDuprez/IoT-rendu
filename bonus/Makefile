@@ -14,8 +14,8 @@ help:
 	@echo "  \033[1;32m2- make setup-cluster\033[0m        - Create K3d cluster"
 	@echo "  \033[1;32m3- make install-gitlab\033[0m       - Install GitLab"
 	@echo "  \033[1;32m4- make install-argocd\033[0m       - Install ArgoCD"
-	@echo "  \033[1;32m5- make create-pat\033[0m           - Create GitLab Personal Access Token"
-	@echo "  \033[1;32m6- make import-repo\033[0m          - Import GitHub repo to GitLab"
+	@echo "  \033[1;32m5- make import-repo\033[0m          - Import GitHub repo to GitLab"
+	@echo "  \033[1;32m6- make create-pat\033[0m           - Create GitLab Personal Access Token"
 	@echo "  \033[1;32m7- make connect-argocd-to-gitlab\033[0m - Connect ArgoCD to GitLab"
 	@echo "\033[1;36m----------------------------------------------------------------\033[0m"
 	@echo "\033[1;33mCluster management:\033[0m"
@@ -60,6 +60,12 @@ install-gitlab:
 	@./install_gitlab.sh
 	@echo "\033[1;32m✓ GitLab installed\033[0m"
 
+# Import GitHub repo
+import-repo:
+	@echo "\033[1;36m=== Step 6: Importing GitHub repo to GitLab ===\033[0m"
+	@./import_github_to_gitlab.sh
+	@echo "\033[1;32m✓ Repo imported\033[0m"
+
 # Install ArgoCD
 install-argocd:
 	@echo "\033[1;36m=== Step 4: Installing ArgoCD ===\033[0m"
@@ -72,11 +78,7 @@ create-pat:
 	@./create_gitlab_pat.sh
 	@echo "\033[1;32m✓ PAT created\033[0m"
 
-# Import GitHub repo
-import-repo:
-	@echo "\033[1;36m=== Step 6: Importing GitHub repo to GitLab ===\033[0m"
-	@./import_github_to_gitlab.sh
-	@echo "\033[1;32m✓ Repo imported\033[0m"
+
 
 # Connect ArgoCD to GitLab
 connect-argocd-to-gitlab:
@@ -161,10 +163,10 @@ switch-v2:
 
 clean-argocd:
 	@echo "\033[1;36m=== Cleaning ArgoCD ===\033[0m"
-	@kubectl delete application -n argocd wil-playground-app --ignore-not-found=true
-	@kubectl delete -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --ignore-not-found=true
-	@kubectl delete namespace argocd --ignore-not-found=true
-	@kubectl delete namespace dev --ignore-not-found=true
+	@kubectl delete application -n argocd wil-playground-app --ignore-not-found=true 2>/dev/null || true
+	@kubectl delete -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --ignore-not-found=true 2>/dev/null || true
+	@kubectl delete namespace argocd --ignore-not-found=true 2>/dev/null || true
+	@kubectl delete namespace dev --ignore-not-found=true 2>/dev/null || true
 	@echo "\033[1;32m✓ ArgoCD cleaned\033[0m"
 
 clean-temp:
@@ -173,5 +175,10 @@ clean-temp:
 	@if [ -d /tmp/iot_lciullo ]; then rm -rf /tmp/iot_lciullo && echo "  Removed /tmp/iot_lciullo"; fi
 	@echo "\033[1;32m✓ Temporary files cleaned\033[0m"
 
-fclean: clean-argocd uninstall-gitlab cluster-delete clean-temp
+fclean:
+	@echo "\033[1;31m⚠ Starting full cleanup...\033[0m"
+	@$(MAKE) clean-argocd 2>/dev/null || true
+	@$(MAKE) uninstall-gitlab 2>/dev/null || true
+	@$(MAKE) cluster-delete 2>/dev/null || true
+	@$(MAKE) clean-temp
 	@echo "\033[1;32m✓ Full cleanup complete\033[0m"

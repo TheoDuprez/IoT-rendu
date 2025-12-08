@@ -313,3 +313,8 @@ kubectl delete application -n argocd wil-playground-app
 kubectl delete -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --ignore-not-found=true
 kubectl delete namespace argocd --ignore-not-found=true
 kubectl delete namespace dev --ignore-not-found=true 
+
+
+=========================
+A rajouter 
+echo "172.18.0.2 gitlab.local" | sudo tee -a /etc/hosts
