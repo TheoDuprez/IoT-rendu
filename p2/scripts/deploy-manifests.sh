@@ -11,15 +11,15 @@ echo "=== Déploiement des applications ==="
 
 # Déploiement de app1
 echo "Déploiement de app1..."
-sudo kubectl apply -f /vagrant/manifests/app1.yaml
+sudo kubectl apply -f /vagrant/confs/app1.yaml
 
 # Déploiement de app2 (avec 3 replicas)
 echo "Déploiement de app2..."
-sudo kubectl apply -f /vagrant/manifests/app2.yaml
+sudo kubectl apply -f /vagrant/confs/app2.yaml
 
 # Déploiement de app3
 echo "Déploiement de app3..."
-sudo kubectl apply -f /vagrant/manifests/app3.yaml
+sudo kubectl apply -f /vagrant/confs/app3.yaml
 
 # Attente que les pods soient prêts
 echo "Attente que les pods soient prêts..."
@@ -27,7 +27,7 @@ sleep 5
 
 # Déploiement de l'Ingress
 echo "Déploiement de l'Ingress..."
-sudo kubectl apply -f /vagrant/manifests/ingress.yaml
+sudo kubectl apply -f /vagrant/confs/ingress.yaml
 
 echo "=== Déploiement terminé ==="
 echo ""

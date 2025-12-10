@@ -22,6 +22,15 @@ help:
 	@echo "  \033[1;32mmake k3s\033[0m     		- Check K3s installation"
 	@echo ""
 
+
+installation:	
+	@echo "\033[1;36m=== Installation Instructions ===\033[0m"
+	@echo "1. Install VirtualBox"
+	@sudo bash ./scripts/install_virtualbox.sh
+	@echo "2. Install Vagrant"
+	@sudo bash ./scripts/install_vagrant.sh
+	@echo "\033[1;32mInstallation completed!\033[0m"
+
 up: clean 
 	vagrant up
 

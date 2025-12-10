@@ -181,6 +181,11 @@ Then:
 - curl -H "Host: app2.com" http://localhost
 - curl http://localhost
 
+
+# ======================================================================= #
+
+https://addons.mozilla.org/fr/firefox/addon/headermod/
+
 # ====================================================================== #
 # -------------------------------------- #
 #   Useful K3s troubleshooting commands
