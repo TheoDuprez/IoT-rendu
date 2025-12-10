@@ -1,0 +1,19 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.synced_folder ".", "/vagrant"
+
+  config.vm.define "lciulloS" do |server_vm|
+    server_vm.vm.box = "bento/debian-13"
+    server_vm.vm.hostname = "lciulloS"
+    server_vm.vm.network "private_network", ip: "192.168.56.110"
+    server_vm.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+    end
+    server_vm.vm.provision "shell", path: "scripts/install-k3s-master.sh"
+    server_vm.vm.provision "shell", path: "scripts/deploy-manifests.sh"
+  end
+
+end 
