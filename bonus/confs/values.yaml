@@ -1,0 +1,16 @@
+global:
+  edition: ce
+  
+  hosts:
+    domain: iot.com
+    https: false
+
+  ingress:
+    configureCertmanager: false
+
+installCertManager: false
+
+prometheus:
+  install: false
+gitlab-runner:
+  install: false
