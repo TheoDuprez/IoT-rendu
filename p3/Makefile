@@ -12,4 +12,4 @@ clean:
 	sudo rm -rf /usr/local/bin/k3d
 	rm -rf playground_application
 
-.PHONY: all clean fclean re
+.PHONY: all clean
