@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-#### IoT-rendu
+# IoT-rendu
 =======
 # Inception of Things
 
