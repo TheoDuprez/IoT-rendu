@@ -14,8 +14,9 @@ echo $'\nInstalling ArgoCD...'
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 kubectl wait -n argocd --for=condition=available deployment --all --timeout=3m
 
-echo $'\nArgoCD admin password:'
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+echo $'\nArgoCD admin password is stored in argocd_admin_password.txt'
+ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+echo $ARGOCD_PASSWORD > argocd_admin_password.txt
 
 echo $'\nStarting ArgoCD port-forward on localhost:8080...'
 nohup kubectl port-forward -n argocd svc/argocd-server 8080:443 > argocd.log 2>&1 &
@@ -34,8 +35,9 @@ kubectl wait -n gitlab --for=condition=available deployment/gitlab-webservice-de
 echo $'\nApplying GitLab ingress configuration...'
 kubectl apply -f ./confs/gitlab_ingress.yaml
 
-echo "GitLab root password:"
-kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -o jsonpath="{.data.password}" | base64 -d
+echo "GitLab root password is stored in gitlab_root_password.txt"
+GITLAB_PASSWORD=$(kubectl get secret -n gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 -d)
+echo $GITLAB_PASSWORD > gitlab_root_password.txt
 
 echo $'\nStarting GitLab port-forward on localhost:8082...'
 nohup kubectl port-forward -n gitlab svc/gitlab-webservice-default 8082:8181 > gitlab.log 2>&1 &

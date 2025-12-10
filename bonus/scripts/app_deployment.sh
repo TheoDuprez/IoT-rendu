@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# # Configure ArgoCD to access GitLab repository
-# echo "Configuring ArgoCD to access GitLab..."
-# bash ./scripts/configure_argocd_gitlab.sh
-
-# Apply the ArgoCD application
 kubectl apply -f ./confs/app_wil_argoCD.yaml
 
 echo "Waiting for ArgoCD to sync the application..."

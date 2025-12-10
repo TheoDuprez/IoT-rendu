@@ -9,6 +9,12 @@ kubectl create namespace dev
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 kubectl wait -n argocd --for=condition=available deployment --all --timeout=3m
 
+# Configure ArgoCD for faster sync (30 seconds instead of 3 minutes)
+echo "Configuring ArgoCD sync interval..."
+kubectl patch configmap argocd-cm -n argocd --type merge -p '{"data":{"timeout.reconciliation":"30s"}}'
+kubectl rollout restart deployment argocd-application-controller -n argocd
+kubectl wait -n argocd --for=condition=available deployment argocd-application-controller --timeout=2m
+
 # To print the initial password generated for admin user
 echo "Password: $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)"
 

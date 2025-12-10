@@ -51,9 +51,8 @@ Here, this simple vagrantfile only downloads an ubuntu box (like an image) and i
 	vboxmanage list runningvms #To show running vms
 	vagrant ssh <VM_NAME> # To connect via ssh
 	ip addr show # once connected in ssh, to show the private network ip (eth1)
-   sudo kubectl get nodes -o wide # check nodes in a vm
-
-   /etc/rancher/k3s/server/node-token # path to server/controller token
+	sudo kubectl get nodes -o wide # check nodes in a vm
+	/etc/rancher/k3s/server/node-token # path to server/controller token
 
 ## Part 1: K3s and Vagrant
 
@@ -104,8 +103,6 @@ Here, this simple vagrantfile only downloads an ubuntu box (like an image) and i
 - `sudo kubectl get nodes -o wide` to see the nodes in the cluster
 - `sudo kubectl get pod -A` to see the pods
 - `ip a show eth1` to see the configuration
--
-- Si pbm de virtualisation sur le run *vagrant up* `kvm ` 
 
 ## Part 2 : K3s and 3 apps (+ Ingress)
 
