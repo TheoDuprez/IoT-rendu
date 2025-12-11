@@ -7,6 +7,9 @@ upgrade_application:
 downgrade_application:
 	./scripts/downgrade_application.sh
 
+get_argocd_password:
+	argocd admin initial-password -n argocd | head -n 1
+
 clean:
 	k3d cluster delete k3s-cluster
 	sudo rm -rf /usr/local/bin/k3d

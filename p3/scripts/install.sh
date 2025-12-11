@@ -40,8 +40,17 @@ kubectl create namespace dev
 
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 kubectl wait -n argocd --for=condition=Available deployment --all --timeout=3m
+nohup kubectl port-forward svc/argocd-server -n argocd 8080:443 > /dev/null 2>&1 &
 
 kubectl apply -f https://raw.githubusercontent.com/TheoDuprez/tduprez_k3d_infra/main/application.yaml
 
-argocd admin initial-password -n argocd
-nohup kubectl port-forward svc/argocd-server -n argocd 8080:443 > /dev/null 2>&1 &
+kubectl patch deployment argocd-server -n argocd --type=json -p='[
+    {"op": "replace", "path": "/spec/template/spec/containers/0/args", "value": [
+        "/usr/local/bin/argocd-server",
+        "--insecure"
+    ]}
+  ]'
+
+kubectl rollout status deployment argocd-server -n argocd
+
+kubectl apply -f confs/ingress.yaml
