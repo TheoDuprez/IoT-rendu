@@ -7,7 +7,7 @@ spec:
   project: default
   
   source:
-    repoURL: http://iot-webservice-default.gitlab.svc.cluster.local:8181/root/playground_application.git
+    repoURL: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/root/playground_application.git
     targetRevision: HEAD
     path: deployment
 

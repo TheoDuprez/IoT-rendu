@@ -35,7 +35,8 @@ sudo apt-get install helm
 
 # Install k3d and setup k3s cluster
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-k3d cluster create k3s-cluster --k3s-arg "--disable=traefik@server:0"
+# k3d cluster create k3s-cluster --k3s-arg "--disable=traefik@server:0"
+k3d cluster create k3s-cluster
 k3d cluster start k3s-cluster
 
 # Install glab (gitlab CLI)
@@ -51,23 +52,32 @@ kubectl create namespace dev
 kubectl create namespace gitlab
 
 # Update hosts config
-cat /etc/hosts | grep "172.18.0.2 gitlab.iot.com iot.com registry.iot.com minio.iot.com" > /dev/null
+cat /etc/hosts | grep "172.18.0.2 gitlab.local" > /dev/null
 
 if [ $? -eq 1 ]; then
-  sudo sh -c 'echo "172.18.0.2 gitlab.iot.com iot.com registry.iot.com minio.iot.com" >> /etc/hosts'
+  sudo sh -c 'echo "172.18.0.2 gitlab.local" >> /etc/hosts'
 fi
 
 # Create argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 kubectl wait -n argocd --for=condition=Available deployment --all --timeout=3m
 
+kubectl patch deployment argocd-server -n argocd --type=json -p='[
+    {"op": "replace", "path": "/spec/template/spec/containers/0/args", "value": [
+        "/usr/local/bin/argocd-server",
+        "--insecure"
+    ]}
+  ]'
+
+kubectl rollout status deployment argocd-server -n argocd
+
 # Install gitlab release
 helm repo add gitlab http://charts.gitlab.io/
-echo "\nInstalling gitlab...\n"
-helm upgrade --install iot gitlab/gitlab -f confs/values.yaml -n gitlab
+echo "Installing gitlab..."
+helm upgrade --install gitlab gitlab/gitlab -f confs/values.yaml -n gitlab
 
 while true; do
-    if [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k https://gitlab.iot.com/users/sign_in) -eq "200" ]; then
+    if [ $(curl -m 0.5 -s -o /dev/null -w "%{http_code}" -k https://gitlab.local/users/sign_in) -eq "200" ]; then
         break
     fi
     sleep 1

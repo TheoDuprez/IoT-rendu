@@ -50,12 +50,12 @@ kubectl patch deployment argocd-server -n argocd --type=json -p='[
     ]}
   ]'
 
+kubectl rollout status deployment argocd-server -n argocd
+
 cat /etc/hosts | grep "172.18.0.2 playground.local argocd.local" > /dev/null
 
 if [ $? -eq 1 ]; then
   sudo sh -c 'echo "172.18.0.2 playground.local argocd.local" >> /etc/hosts'
 fi
-
-kubectl rollout status deployment argocd-server -n argocd
 
 kubectl apply -f confs/ingress.yaml

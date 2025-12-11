@@ -1,16 +1,45 @@
 global:
   edition: ce
-  
   hosts:
-    domain: iot.com
+    domain: gitlab.local
     https: false
-
+    gitlab:
+      name: gitlab.local
+      https: false
+    
   ingress:
+    enabled: true
     configureCertmanager: false
+    class: "traefik"
+    annotations:
+      kubernetes.io/ingress.class: "traefik"
+    tls:
+      enabled: false
 
-installCertManager: false
+  shell:
+    port: 22
+
+nginx-ingress:
+  enabled: false
 
 prometheus:
   install: false
+
 gitlab-runner:
   install: false
+# global:
+#   edition: ce
+  
+#   hosts:
+#     domain: iot.com
+#     https: false
+
+#   ingress:
+#     configureCertmanager: false
+
+# installCertManager: false
+
+# prometheus:
+#   install: false
+# gitlab-runner:
+#   install: false
