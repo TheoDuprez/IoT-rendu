@@ -40,7 +40,6 @@ kubectl create namespace dev
 
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 kubectl wait -n argocd --for=condition=Available deployment --all --timeout=3m
-nohup kubectl port-forward svc/argocd-server -n argocd 8080:443 > /dev/null 2>&1 &
 
 kubectl apply -f https://raw.githubusercontent.com/TheoDuprez/tduprez_k3d_infra/main/application.yaml
 
@@ -50,6 +49,12 @@ kubectl patch deployment argocd-server -n argocd --type=json -p='[
         "--insecure"
     ]}
   ]'
+
+cat /etc/hosts | grep "172.18.0.2 playground.local argocd.local" > /dev/null
+
+if [ $? -eq 1 ]; then
+  sudo sh -c 'echo "172.18.0.2 playground.local argocd.local" >> /etc/hosts'
+fi
 
 kubectl rollout status deployment argocd-server -n argocd
 
