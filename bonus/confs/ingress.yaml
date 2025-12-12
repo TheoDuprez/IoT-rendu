@@ -1,25 +1,3 @@
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: gitlab-ingress
-#   namespace: gitlab
-#   annotations:
-#     ingress.kubernetes.io/ssl-redirect: "false"
-#     traefik.ingress.kubernetes.io/router.entrypoints: web
-# spec:
-#   ingressClassName: traefik
-#   rules:
-#     - host: gitlab.local
-#       http:
-#         paths:
-#           - path: /
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: gitlab-webservice-default
-#                 port:
-#                   number: 8181
-# ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

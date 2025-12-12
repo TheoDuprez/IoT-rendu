@@ -9,7 +9,7 @@ downgrade_application:
 	./scripts/downgrade_application.sh
 
 get_argocd_password:
-	argocd admin initial-password -n argocd | head -n 1
+	kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath={.data.password} | base64 -d
 
 get_gitlab_password:
 	kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 --decode

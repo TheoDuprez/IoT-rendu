@@ -8,7 +8,7 @@ downgrade_application:
 	./scripts/downgrade_application.sh
 
 get_argocd_password:
-	argocd admin initial-password -n argocd | head -n 1
+	kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath={.data.password} | base64 -d
 
 clean:
 	k3d cluster delete k3s-cluster
